@@ -49,7 +49,7 @@ jobs:
           grep -rl "Lcom/brave/browser_nightly" Bravearm64Universal/ --include="*.smali" | xargs -r sed -i "s|Lcom/brave/browser_nightly|Lcom/microsoft/emmx|g"
           
           # 3. Rebuild
-          java -jar apktool.jar b Bravearm64Universal -o unsigned.apk
+          java -jar apktool_3.0.1.jar b Bravearm64Universal -o unsigned.apk
 
       - name: Decode Keystore
         run: |
