@@ -51,21 +51,22 @@ jobs:
           # 3. Rebuild
           java -jar apktool.jar b Bravearm64Universal -o unsigned.apk
 
-      - name: Sign APK
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+      - name: Decode Keystore
         run: |
-          echo "$KEYSTORE_BASE64" | base64 -d > release.jks
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > release.jks
+
+      - name: Sign APK
+        run: |
           zipalign -v 4 unsigned.apk aligned.apk
           apksigner sign \
-            --ks release.jks --ks-pass pass:${{ secrets.KEYSTORE_PASSWORD }} \
+            --ks release.jks --ks-pass pass:${{ secrets.KEY_PASSWORD }} \
             --key-pass pass:${{ secrets.KEY_PASSWORD }} --ks-key-alias ${{ secrets.KEY_ALIAS }} \
-            --out Bravearm64Universal-emmx-`date +%Y%m%d%H%M%S`.apk aligned.apk
+            --out final_app.apk aligned.apk
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: final-apk
+          name: Bravearm64Universal-emmx-$(date +%F).apk
           path: final_app.apk
 
 
