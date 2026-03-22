@@ -34,12 +34,14 @@ jobs:
           java-version: '21'
           distribution: 'temurin' # Popular, well-supported OpenJDK distribution
 
+      - name: Download latest Brave
+        run: |
+          chmod +x ./download_latest_brave.sh
+          BRAVE_VERSION=$(./download_latest_brave.sh)
+          echo "BRAVE_VERSION=$BRAVE_VERSION" >> $GITHUB_ENV
+
       - name: Modify and Rebuild APK
         run: |
-          # Download latest Brave
-          chmod +x ./download_latest_brave.sh
-          ./download_latest_brave.sh
-
           # 1. Decompile
           chmod +x ./apktool
           ./apktool d Bravearm64Universal.apk -o Bravearm64Universal
@@ -71,7 +73,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Bravearm64Universal-emmx-$(date +%F).apk
+          name: Bravearm64Universal-emmx-${BRAVE_VERSION}.apk
           path: final_app.apk
 
 
