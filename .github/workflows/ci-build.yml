@@ -41,15 +41,20 @@ jobs:
           ./download_latest_brave.sh
 
           # 1. Decompile
-          java -jar apktool_3.0.1.jar d Bravearm64Universal.apk -o Bravearm64Universal
+          chmod +x ./apktool
+          ./apktool d Bravearm64Universal.apk -o Bravearm64Universal
           
           # 2. Update Package Name (Manifest + Smali paths)
-          sed -i 's/package="com.brave.browser_nightly"/package="com.microsoft.emmx"/g' Bravearm64Universal/AndroidManifest.xml
+          sed -i 's/package="com.brave.browser"/package="com.microsoft.emmx"/g' Bravearm64Universal/AndroidManifest.xml
           echo "renameManifestPackage: com.microsoft.emmx" >> Bravearm64Universal/apktool.yml
-          grep -rl "Lcom/brave/browser_nightly" Bravearm64Universal/ --include="*.smali" | xargs -r sed -i "s|Lcom/brave/browser_nightly|Lcom/microsoft/emmx|g"
+          grep -rl "Lcom/brave/browser" Bravearm64Universal/ --include="*.smali" | xargs -r sed -i "s|Lcom/brave/browser|Lcom/microsoft/emmx|g"
           
-          # 3. Rebuild
-          java -jar apktool_3.0.1.jar b Bravearm64Universal -o unsigned.apk
+          # 3. Replace Brave Icons
+          chmod +x ./replace_res_icons.sh
+          ./replace_res_icons.sh
+
+          # 4. Rebuild
+          ./apktool b Bravearm64Universal -o unsigned.apk
 
       - name: Decode Keystore
         run: |
