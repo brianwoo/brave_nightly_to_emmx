@@ -47,7 +47,8 @@ jobs:
           chmod +x ./apktool
           ./apktool d Bravearm64Universal.apk -o Bravearm64Universal
           
-          # 2. Update Package Name (Manifest + Smali paths)          
+          # 2. Update Package Name (Manifest + Smali paths)
+          sed -i 's/>Brave</>Brave Edge</g' Bravearm64Universal/res/values/strings.xml
           sed -i 's/com.brave.browser/com.microsoft.emmx/g' Bravearm64Universal/AndroidManifest.xml
           echo "renameManifestPackage: com.microsoft.emmx" >> Bravearm64Universal/apktool.yml
           grep -rl "Lcom/brave/browser" Bravearm64Universal/ --include="*.smali" | xargs -r sed -i "s|Lcom/brave/browser|Lcom/microsoft/emmx|g"
